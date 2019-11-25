@@ -1,7 +1,7 @@
 # rn-assessment
 
 
-In order to start please fork this repo. `Scheduler.js` and `Solution.txt` are the only files that needs to be modified in order to complete this assessment. Please provide the solutions to `1` and `2` by modifying `Solutions.txt` and use `Scheduler.js` for question `3`. <br><br>
+In order to start please fork this repo. `Scheduler.js` and `Solutions.txt` are the only files that needs to be modified in order to complete this assessment. Please provide the solutions to `1` and `2` by modifying `Solutions.txt` and use `Scheduler.js` for question `3`. <br><br>
 &nbsp;&nbsp;&nbsp; Once you have completed these tasks, in order to submit your work please create a pull request to the branch `a1` to be reviewed.
 
 
