@@ -11,7 +11,7 @@ import {
 
 const WIDTH = Dimensions.get("window").width;
 const WEEK = ["Mon", "Tue", "Wed", "Thu", "Fri"];
-export default class Assessment extends Component {
+export default class Scheduler extends Component {
   static navigationOptions = {
     title: "Awesome Scheduler"
   };
@@ -21,14 +21,14 @@ export default class Assessment extends Component {
     this.state = {
       Mon: [],
       Tue: [
-        { id: 102, title: "Running" },
+        { id: 102, title: "Table Tennis" },
         { id: 104, title: "Swimming" }
       ],
       Wed: [{ id: 103, title: "Cycling" }],
       Thu: [{ id: 108, title: "Rest" }],
       Fri: [
         { id: 103, title: "Badminton" },
-        { id: 109, title: "Hiking" }
+        { id: 109, title: "KickBoxing" }
       ],
       selectedActivity: null,
       daySelected: null,
@@ -126,7 +126,9 @@ export default class Assessment extends Component {
 class DaySchedule extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+        data : this.props.data
+    };
   }
 
   componentDidMount = () => {};
@@ -141,7 +143,7 @@ class DaySchedule extends Component {
 
     return (
       <View style={styles.dayScheduleScrollView}>
-        {data.map(({ title, id }) => (
+        {this.state.data.map(({ title, id }) => (
           <TouchableOpacity
             style={styles.activityItemView}
             key={id}
