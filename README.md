@@ -14,8 +14,7 @@ In order to start please fork this repo. `Scheduler.js` and `Solutions.txt` are 
 3. The file `Scheduler.js` is developed alongside expo. In order to complete this, you will need a development tool setup to run react-native app either `expo` or `Vanilla React Native`.<br><br>
 &nbsp;&nbsp;&nbsp; The purpose of the `Scheduler` component is to display a list of activities scheduled over a week with an additional feature that allows user to move an activity to a different day. At the moment, the component just displays the activites for each day. Please make necessary modifications to the file in order to meet the following acceptance criteria:<br><br>
 * At the moment, any activity onLongPressed displays a Modal at the bottom of the screen. The purpose of the modal is to allow users to choose a different day to move the selected activity. The modal needs to display all 5 days 'Mon-Fri'.<br>
-![alt text](https://github.com/TAS-torukmacto/rn-assessment/blob/master/daySelector.jpg)
-
+![](https://github.com/TAS-torukmacto/rn-assessment/blob/master/daySelector.jpg)
 * when an activity is selected, the day it belongs to should be highlighted on the modal by default with a green background. 
 * When an alternative day is selected, it should be indicated with a green background and grey background for all unseleected days.<br>
 * The `move` button should be disabled until an alternative day is selected and the `cancel` button when pressed should reset the modal state and hide it.<br>
