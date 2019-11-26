@@ -1,9 +1,57 @@
 Please provide solutions to 1 and 2 below.
 
 
-1. 
+1.
+/* parent.js */
+const { spawn } = require('child_process');
+const delay = process.argv[2] || 1000;
+const childrenNumber = process.argv[3] || 2;
 
+// Create a child process that send a message after {delay} milliseconds
+const spawnChild = (delay, index) => {
+    return new Promise(resolve => {
+        const opt = {stdio: [null, null, null, 'ipc']};
+        spawn('node', ['child.js', index, delay], opt).on('message', (message) => {
+            return resolve(message.msg);
+        })
+    })
+};
 
+// Generate N child and wait for their responses
+const spawnChildren = (n, ms) => {
+    console.log(`${n} children will say 'Hello' after ${ms} milliseconds`);
+
+    let processes = [];
+    for(let i = 0; i < childrenNumber; i++) {
+        processes.push(spawnChild(ms, i))
+    }
+
+    return Promise.all(processes);
+};
+
+spawnChildren(childrenNumber, delay).then(console.log);
+
+/* END OF PARENT */
+
+/* child.js */
+const index = process.argv[2];
+const delay = process.argv[3] || 1000;
+
+if (process.send) {
+    const childMessage = {id: index, msg: `Hello from the other side #${index}`};
+    setTimeout(() => process.send(childMessage), delay);
+}
+/* END OF CHILD */
 
 
 2.
+/*
+ * date = "YYYY-MM-DD", time = "HH:mm"
+ * Return true if the date past
+*/
+function isPast(date, time) {
+ 	const now = new Date();
+ 	const compareDate = new Date(`${date}T${time}`);
+	return now.getTime() > compareDate.getTime()
+}
+
