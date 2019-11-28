@@ -24,7 +24,7 @@ export default class Scheduler extends Component {
         { id: 102, title: "Table Tennis" },
         { id: 104, title: "Swimming" }
       ],
-      Wed: [{ id: 103, title: "Cycling" }],
+      Wed: [{ id: 101, title: "Cycling" }],
       Thu: [{ id: 108, title: "Rest" }],
       Fri: [
         { id: 103, title: "Badminton" },
