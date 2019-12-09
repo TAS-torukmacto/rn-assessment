@@ -3,7 +3,76 @@ Please provide solutions to 1 and 2 below.
 
 1. 
 
+// ****** parent.js ****** //
 
+const { spawn } = require("child_process");
+const delay = process.argv[2];
+const childrenNumber = 2;
+
+process.on("exit", code =>
+  code === "noDelay" ? console.log("You need to provide delay as an arg") : null
+);
+
+if (!delay) {
+  process.exit("noDelay");
+}
+
+const spawnNodeChild = (delay, index) => {
+  return new Promise((resolve, reject) => {
+    const options = { stdio: [null, null, null, "ipc"] };
+    const child = spawn("node", ["./child.js", index, delay], options);
+    child.on("message", message => {
+      resolve(message);
+    });
+    child.on("error", error => {
+      reject(error);
+    });
+  });
+};
+
+const getChildrenMessages = delay => {
+  console.log("waiting for child processes ...");
+
+  let children = [];
+  for (let i = 0; i < childrenNumber; i++) {
+    children.push(spawnNodeChild(delay, i));
+  }
+
+  return Promise.all(children);
+};
+
+getChildrenMessages(delay)
+  .then(messages => messages.forEach(message => console.log(message)))
+  .catch(error => console.log("Could not get children messages: ", error));
+
+// ******************* //
+
+// ***** child.js ***** //
+
+const index = process.argv[2];
+const delay = process.argv[3];
+
+if (process.send) {
+  const message = `Child ${Number(index) + 1}: Hello world`;
+  setTimeout(() => process.send(message), delay);
+}
+
+// ***************** //
+
+// The parent.js file and child.js file should be in the same directory.
+// To run the processes, run; node parent.js $delay (eg. run node parent.js 1000 )
 
 
 2.
+
+// The library Moment.js is being used
+// The library can be installed with npm
+// To do that run; npm init and then run; npm install moment
+
+const moment = require("moment");
+
+const isTimePassed = (date, time) => {
+  const dateFormated = moment(`${date} ${time}`);
+  const now = moment();
+  return now.isAfter(dateFormated);
+};
