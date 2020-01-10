@@ -2,7 +2,7 @@
 
 
 In order to start please fork this repo. `Scheduler.js` and `Solutions.txt` are the only files that needs to be modified in order to complete this assessment. Please provide the solutions to `1` and `2` by modifying `Solutions.txt` and use `Scheduler.js` for question `3`. <br><br>
-&nbsp;&nbsp;&nbsp; Once you have completed these tasks, in order to submit your work please create a pull request to the branch assigned to you for a review.
+&nbsp;&nbsp;&nbsp; Once you have completed these tasks, in order to submit your work please create a pull request to the branch a3 for a review.
 
 
 1. Write a function that spawns 2 child node processes that send back "Hello world" after x milliseconds, the delay should be defined by an argument (e.g. `node child_process 100`). The function should return a promise that resolves with the results of all child processes.
