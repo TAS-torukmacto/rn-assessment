@@ -2,66 +2,56 @@
 
 // 1. 
 
-const { spawn } = require("child_process");
-const delay = process.argv[2];
-const childrenNumber = 2;
+// Parent.js
 
-process.on("exit", code =>
-  code === "noDelay" ? console.log("You need to provide delay as an arg") : null
-);
+const {spawn} = require('child_process')
 
-if (!delay) {
-  process.exit("noDelay");
+const delay = process.argv[2]
+const childrenNumber = 2
+
+const spawnChild = (delay, childIndex) => {
+    return new Promise((resolve, reject) => {
+        const options = {stdio: [null, null, null, 'ipc']}
+        //node ./child.js {childIndex} {delay}
+        const child = spawn('node', ['./child.js', childIndex, delay], options)
+        child.on('message', (message) => {
+            resolve(message)
+        })
+
+        child.on('error', (error) => {
+            console.log(error)
+            reject(error)
+        })
+
+    })
 }
 
-const spawnChild = (delay, index) => {
-  return new Promise((resolve, reject) => {
-    const options = { stdio: [null, null, null, "ipc"] };
-    const child = spawn("node", ["./child.js", index, delay], options);
-    child.on("message", message => {
-      resolve(message);
-    });
-    child.on("error", error => {
-      reject(error);
-    });
-  });
-};
+const getMessages = (delay) => {
+    let children = []
+    for (let i = 0; i < childrenNumber; i++) {
+        children.push(spawnChild(delay, i))
+    }
+    return Promise.all(children)
+}
 
-const getChildrenMessages = delay => {
-  console.log("waiting for child processes ...");
-
-  let children = [];
-  for (let i = 0; i < childrenNumber; i++) {
-    children.push(spawnChild(delay, i));
-  }
-
-  return Promise.all(children);
-};
-
-getChildrenMessages(delay)
-  .then(messages => messages.forEach(message => console.log(message)))
-  .catch(error => console.log("Could not get children messages: ", error));
+getMessages(delay).then(console.log).catch(e => console.log(e))
 
 
-//  //
+// child.js
 
 const index = process.argv[2];
 const delay = process.argv[3];
 
+console.log('called')
 if (process.send) {
-  const message = `Child ${Number(index) + 1}: Hello world`;
-  setTimeout(() => process.send(message), delay);
+    const message = `Child ${Number(index) + 1}: Hello world`;
+    setTimeout(() => process.send(message), delay);
 }
-
-// ***************** //
-
-// The parent.js file and child.js file should be in the same directory.
-// To run the processes, run; node parent.js $delay (eg. run node parent.js 1000 )
 
 
 2.
 
-// Can be tested in browser console
+// Can be tested in browser console or is available at https://codepen.io/serdarmustafa1/pen/jOExxoY
 
 CompareDate = () => {  
     const today = new Date();
@@ -76,3 +66,5 @@ CompareDate = () => {
 (dateTime > prevDateTime) ? alert("Todays Date is greater than previous date.") : alert("Todays Date is greater than previous date."); 
  }  
  CompareDate();
+ 
+ 3. scheduler file updated in this repo and also available in full at https://github.com/SerdarMustafa1/TAS-Assignment
