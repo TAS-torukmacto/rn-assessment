@@ -11,6 +11,8 @@ import {
 
 const WIDTH = Dimensions.get("window").width;
 const WEEK = ["Mon", "Tue", "Wed", "Thu", "Fri"];
+const lightGrey = "#D3D3D3";
+
 export default class Scheduler extends Component {
   static navigationOptions = {
     title: "Awesome Scheduler"
@@ -19,31 +21,35 @@ export default class Scheduler extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      Mon: [],
-      Tue: [
-        { id: 102, title: "Table Tennis" },
-        { id: 104, title: "Swimming" }
-      ],
-      Wed: [{ id: 101, title: "Cycling" }],
-      Thu: [{ id: 108, title: "Rest" }],
-      Fri: [
-        { id: 103, title: "Badminton" },
-        { id: 109, title: "KickBoxing" }
-      ],
+      days: {
+        Mon: [],
+        Tue: [
+          { id: 102, title: "Table Tennis" },
+          { id: 104, title: "Swimming" }
+        ],
+        Wed: [{ id: 101, title: "Cycling" }],
+        Thu: [{ id: 108, title: "Rest" }],
+        Fri: [
+          { id: 103, title: "Badminton" },
+          { id: 109, title: "KickBoxing" }
+        ]
+      },
       selectedActivity: null,
       daySelected: null,
       displayModal: false
     };
   }
 
-  componentWillMount() {}
-
   onLongPressed = (id, day) => {
-    this.selectedActivityDay = day;
-    this.setState({ selectedActivity: id, displayModal: true });
+    this.setState({
+      selectedActivity: id,
+      displayModal: true,
+      daySelected: day
+    });
   };
 
   onModalClose = () => {
+    this.selectedActivityDay = null;
     this.setState({
       displayModal: false,
       selectedActivity: null,
@@ -51,14 +57,47 @@ export default class Scheduler extends Component {
     });
   };
 
-  onMoveActivity = () => {};
+  onMoveActivity = () => {
+    const { days, selectedActivity, daySelected } = this.state;
+
+    const activityDay = Object.keys(days).find(day => {
+      const activities = days[day];
+      return activities.some(activity => activity.id === selectedActivity);
+    });
+
+    const activitySelectedObject = days[activityDay].find(
+      activity => activity.id === selectedActivity
+    );
+
+    const newDays = Object.keys(days).reduce((acc, day) => {
+      const activities = days[day];
+
+      const activityRemoved = activities.filter(
+        activity => activity !== activitySelectedObject
+      );
+
+      return {
+        ...acc,
+        [day]:
+          day === daySelected
+            ? [...days[day], activitySelectedObject]
+            : activityRemoved
+      };
+    }, {});
+
+    this.setState({ days: newDays, displayModal: false });
+  };
+
+  onModalDayPress = day => {
+    this.selectedActivityDay = day;
+    this.setState({ daySelected: day });
+  };
 
   render() {
+    const { daySelected } = this.state;
+
     return (
       <View style={styles.container}>
-        <View style={styles.headerView}>
-          <Text style={styles.bannerText}> Toruk Macto Schedule week 1 </Text>
-        </View>
         <View style={styles.content}>
           {WEEK.map(day => {
             return (
@@ -68,7 +107,7 @@ export default class Scheduler extends Component {
                 </View>
                 <DaySchedule
                   day={day}
-                  data={this.state[day]}
+                  data={this.state.days[day]}
                   onLongPressed={this.onLongPressed}
                 />
               </View>
@@ -85,8 +124,31 @@ export default class Scheduler extends Component {
             <View style={styles.modalContent}>
               <View>
                 <Text style={{ textAlign: "center" }}>
-                  Select a date to move the activity
+                  Select a day to move the activity
                 </Text>
+              </View>
+
+              <View style={styles.daySelectorView}>
+                {WEEK.map(day => {
+                  return (
+                    <TouchableWithoutFeedback
+                      key={day}
+                      onPress={() => this.onModalDayPress(day)}
+                    >
+                      <View
+                        style={[
+                          styles.dayButton,
+                          {
+                            backgroundColor:
+                              daySelected === day ? "green" : lightGrey
+                          }
+                        ]}
+                      >
+                        <Text>{day}</Text>
+                      </View>
+                    </TouchableWithoutFeedback>
+                  );
+                })}
               </View>
 
               <View style={styles.modalButtonContainer}>
@@ -124,17 +186,6 @@ export default class Scheduler extends Component {
 }
 
 class DaySchedule extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-        data : this.props.data
-    };
-  }
-
-  componentDidMount = () => {};
-
-  componentWillReceiveProps = () => {};
-
   render() {
     const { data } = this.props;
     if (!data) {
@@ -143,7 +194,7 @@ class DaySchedule extends Component {
 
     return (
       <View style={styles.dayScheduleScrollView}>
-        {this.state.data.map(({ title, id }) => (
+        {data.map(({ title, id }) => (
           <TouchableOpacity
             style={styles.activityItemView}
             key={id}
