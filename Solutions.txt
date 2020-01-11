@@ -67,4 +67,12 @@ CompareDate = () => {
  }  
  CompareDate();
  
+------ Second solution:---------
+
+const compareDate = (date, time) => {
+    const dateTobeComparedWith = new Date(`${date}T${time}`)
+    const now = new Date();
+    return now.getTime() > dateTobeComparedWith.getTime()
+}
+ 
  3. scheduler file updated in this repo and also available in full at https://github.com/SerdarMustafa1/TAS-Assignment
