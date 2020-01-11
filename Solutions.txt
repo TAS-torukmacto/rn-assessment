@@ -1,9 +1,78 @@
-Please provide solutions to 1 and 2 below.
+// TODO: Please provide solutions to 1 and 2 below.
+
+// 1. 
+
+const { spawn } = require("child_process");
+const delay = process.argv[2];
+const childrenNumber = 2;
+
+process.on("exit", code =>
+  code === "noDelay" ? console.log("You need to provide delay as an arg") : null
+);
+
+if (!delay) {
+  process.exit("noDelay");
+}
+
+const spawnChild = (delay, index) => {
+  return new Promise((resolve, reject) => {
+    const options = { stdio: [null, null, null, "ipc"] };
+    const child = spawn("node", ["./child.js", index, delay], options);
+    child.on("message", message => {
+      resolve(message);
+    });
+    child.on("error", error => {
+      reject(error);
+    });
+  });
+};
+
+const getChildrenMessages = delay => {
+  console.log("waiting for child processes ...");
+
+  let children = [];
+  for (let i = 0; i < childrenNumber; i++) {
+    children.push(spawnChild(delay, i));
+  }
+
+  return Promise.all(children);
+};
+
+getChildrenMessages(delay)
+  .then(messages => messages.forEach(message => console.log(message)))
+  .catch(error => console.log("Could not get children messages: ", error));
 
 
-1. 
+//  //
 
+const index = process.argv[2];
+const delay = process.argv[3];
 
+if (process.send) {
+  const message = `Child ${Number(index) + 1}: Hello world`;
+  setTimeout(() => process.send(message), delay);
+}
+
+// ***************** //
+
+// The parent.js file and child.js file should be in the same directory.
+// To run the processes, run; node parent.js $delay (eg. run node parent.js 1000 )
 
 
 2.
+
+// Can be tested in browser console
+
+CompareDate = () => {  
+    const today = new Date();
+    const date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();  
+    const time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+    const dateTime = date+' '+time;
+
+    const prevDate = new Date(2019, 10, 10);
+    const prevTime = (13, 15, 00)
+    const prevDateTime = prevTime+''+prevDate;
+
+(dateTime > prevDateTime) ? alert("Todays Date is greater than previous date.") : alert("Todays Date is greater than previous date."); 
+ }  
+ CompareDate();
