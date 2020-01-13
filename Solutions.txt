@@ -1,9 +1,78 @@
-Please provide solutions to 1 and 2 below.
+// TODO: Please provide solutions to 1 and 2 below.
+
+// 1. 
+
+// Parent.js
+
+const {spawn} = require('child_process')
+
+const delay = process.argv[2]
+const childrenNumber = 2
+
+const spawnChild = (delay, childIndex) => {
+    return new Promise((resolve, reject) => {
+        const options = {stdio: [null, null, null, 'ipc']}
+        //node ./child.js {childIndex} {delay}
+        const child = spawn('node', ['./child.js', childIndex, delay], options)
+        child.on('message', (message) => {
+            resolve(message)
+        })
+
+        child.on('error', (error) => {
+            console.log(error)
+            reject(error)
+        })
+
+    })
+}
+
+const getMessages = (delay) => {
+    let children = []
+    for (let i = 0; i < childrenNumber; i++) {
+        children.push(spawnChild(delay, i))
+    }
+    return Promise.all(children)
+}
+
+getMessages(delay).then(console.log).catch(e => console.log(e))
 
 
-1. 
+// child.js
 
+const index = process.argv[2];
+const delay = process.argv[3];
 
+console.log('called')
+if (process.send) {
+    const message = `Child ${Number(index) + 1}: Hello world`;
+    setTimeout(() => process.send(message), delay);
+}
 
 
 2.
+
+// Can be tested in browser console or is available at https://codepen.io/serdarmustafa1/pen/jOExxoY
+
+CompareDate = () => {  
+    const today = new Date();
+    const date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();  
+    const time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+    const dateTime = date+' '+time;
+
+    const prevDate = new Date(2019, 10, 10);
+    const prevTime = (13, 15, 00)
+    const prevDateTime = prevTime+''+prevDate;
+
+(dateTime > prevDateTime) ? alert("Todays Date is greater than previous date.") : alert("Todays Date is greater than previous date."); 
+ }  
+ CompareDate();
+ 
+------ Second solution:---------
+
+const compareDate = (date, time) => {
+    const dateTobeComparedWith = new Date(`${date}T${time}`)
+    const now = new Date();
+    return now.getTime() > dateTobeComparedWith.getTime()
+}
+ 
+ 3. scheduler file updated in this repo and also available in full at https://github.com/SerdarMustafa1/TAS-Assignment
